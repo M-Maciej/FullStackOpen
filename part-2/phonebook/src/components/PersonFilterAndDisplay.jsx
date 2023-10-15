@@ -1,17 +1,20 @@
-const NameAndNumber = ({ name, number }) => {
+const NameAndNumber = ({ person, handleDelete }) => {
   return (
-    <li>{`${name}`}&nbsp;{`${number}`}</li>
+    <span>
+      <li>{`${person.name}`}&nbsp;{`${person.number}`}</li>
+      <button onClick={() => handleDelete(person.id)}>Delete</button>
+    </span>
   )
 }
 
-export const PersonDisplay = ({ persons }) => {
+export const PersonDisplay = ({ persons, handleDelete }) => {
   return (
     <ul>
-      {persons.map((registry) => <NameAndNumber key={registry.id} name={registry.name} number={registry.number} />)}
+      {persons.map((registry) => <NameAndNumber key={registry.id} person={registry} handleDelete={handleDelete} />)}
     </ul>
   )
 }
-export const PersonFilter = ({ persons, handleSearch, search }) => {
+export const PersonFilter = ({ persons, handleSearch, search, handleDelete }) => {
   const nameSearch = (registry) => {
     const name = registry.name
     if (name.length < search.length) {
@@ -39,7 +42,7 @@ export const PersonFilter = ({ persons, handleSearch, search }) => {
   return (
     <div>
       filter shown with <input value={search} onChange={handleSearch} />
-      <PersonDisplay persons={persons.filter(nameSearch)} />
+      <PersonDisplay persons={persons.filter(nameSearch)} handleDelete={handleDelete} />
     </div>
   )
 }
