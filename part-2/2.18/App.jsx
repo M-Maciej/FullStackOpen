@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
+
+
+
 const Countries = ({ arrayCountries }) => {
   //console.log(Object.values(arrayCountries)['match'])
   if (arrayCountries.length > 10) {
@@ -122,25 +125,18 @@ const App = () => {
 
 
 
-  const handleChange = (event) => {
-    setValue(event.target.value)
-  }
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    //setSearch(value)
-    const matches = findMatchesInArrayOfObjects(apiData, value)
-    setCountry(matches)
-    //console.log(Object.values(result.data))
-    console.log(matches)
 
+  const handleChange = (event) => {
+    const val = event.target.value
+    const matches = findMatchesInArrayOfObjects(apiData, val)
+    setValue(val)
+    setCountry(matches)
+    console.log(matches)
   }
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <input value={value} onChange={handleChange}></input>
-        <button type='submit'>Search</button>
-      </form>
+      <input value={value} onChange={handleChange}></input>
       <div>
 
         {country
