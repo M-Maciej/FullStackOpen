@@ -30,24 +30,6 @@ app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
 
-app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  new Promise((resolve, reject) => {
-    const found = persons.find(person => {
-      if (id === person.id) {
-        resolve(person)
-        return true
-      }
-      return false
-    })
-    if (!found) {
-      reject(new Error('Person not found'))
-    }
-  })
-    .then(person => response.json(person))
-    .catch(error => response.status(404).end())
-})
-
 app.get('/info', (request, response) => {
   response.send(
     `<p>
