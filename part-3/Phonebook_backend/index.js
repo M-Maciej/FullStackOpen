@@ -1,8 +1,8 @@
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
-const hostname = '127.0.0.1'
-const port = 3001
+const hostname = '0.0.0.0'
+const port = process.env.PORT || 6786
 
 
 let persons = [

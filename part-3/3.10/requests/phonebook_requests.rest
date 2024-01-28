@@ -1,0 +1,13 @@
+Get https://exercise-phonebook-backend-m.fly.dev/api/persons
+
+###
+DELETE https://exercise-phonebook-backend-m.fly.dev/api/persons/3
+
+###
+POST https://exercise-phonebook-backend-m.fly.dev/api/persons HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Arthur Pendragon",
+    "number": "1212"
+}
