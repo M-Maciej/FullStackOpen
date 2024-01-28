@@ -3,7 +3,7 @@ const morgan = require('morgan')
 const app = express()
 const hostname = '0.0.0.0'
 const port = process.env.PORT || 6786
-
+const cors = require('cors')
 
 let persons = [
   {
@@ -33,6 +33,7 @@ const generateId = () => {
 }
 
 app.use(express.static('dist'))
+app.use(cors())
 app.use(express.json())
 app.use(morgan(function (tokens, req, res) {
   return [
