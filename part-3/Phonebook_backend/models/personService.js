@@ -1,7 +1,7 @@
 // personService.js
 const Person = require('./person');
 
-const fetchAll = () => {
+const findAll = () => {
   return Person.find({});
 };
 
@@ -26,7 +26,7 @@ const length = ()=>{
 }
 
 module.exports = {
-  fetchAll,
+  findAll,
   findById,
   addPerson,
   deleteById,

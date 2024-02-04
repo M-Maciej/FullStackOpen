@@ -7,7 +7,7 @@ const app = express()
 const hostname = '0.0.0.0'
 const port = process.env.PORT || 6786
 
-let persons = [
+/*let persons = [
   {
     "id": 1,
     "name": "Arto Hellas",
@@ -32,7 +32,7 @@ let persons = [
 
 const generateId = () => {
   return Math.floor(Math.random() * 10 ** 10)
-}
+}*/
 
 app.use(express.static('dist'))
 app.use(cors())
@@ -57,24 +57,24 @@ app.post('/api/persons', (request, response) => {
   if (!request.body.name || !request.body.number) {
     return response.status(400).json({ error: 'content missing' })
   }
-  const unique = persons.find(person => person.name === request.body.name)
-  if (unique) {
-    return response.status(400).json({ error: 'name must be unique' })
-  }
-  const person = {
-    id: generateId(),
-    name: request.body.name,
-    number: request.body.number
-  }
-  persons = persons.concat(person)
-  console.log(person)
-  response.json(person)
+  personService.findAll()
+    .then(persons => {
+      const unique = persons.find(person => person.name === request.body.name)
+      if (unique) {
+        return response.status(400).json({ error: 'name must be unique' })
+      } else {
+        personService.addPerson(request.body.name, request.body.number)
+          .then(newPerson => {
+            response.json(newPerson)
+          })
+      }
+    })
 
 })
 
 //Gets
 app.get('/api/persons', (request, response) => {
-  personService.fetchAll()
+  personService.findAll()
     .then(persons => {
       response.json(persons)
     })
@@ -106,7 +106,7 @@ app.get('/info', (request, response) => {
     })
     .catch(error => {
       console.error(error);
-      response.status(500).send('<p>Error fetching information</p>');
+      response.status(500).send('<p>Error fetching information</p>')
     });
 });
 //Delete
@@ -119,7 +119,7 @@ app.delete('/api/persons/:id', (request, response) => {
     .then(___ => response.status(204).end())
     .catch(error => response.status(404).end())
 })
-app.get('/favicon.ico', (req, res) => res.status(204).end());
+app.get('/favicon.ico', (req, res) => res.status(204).end())
 //Unkown and listening
 
 const unkowonEndpoint = (request, response) => {
