@@ -1,9 +1,11 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
+const personService = require('./models/personService')
+const cors = require('cors')
 const app = express()
 const hostname = '0.0.0.0'
 const port = process.env.PORT || 6786
-const cors = require('cors')
 
 let persons = [
   {
@@ -48,6 +50,9 @@ app.use(morgan(function (tokens, req, res) {
   ].join(' ')
 }))
 
+
+//HTTP requests
+//Post
 app.post('/api/persons', (request, response) => {
   if (!request.body.name || !request.body.number) {
     return response.status(400).json({ error: 'content missing' })
@@ -67,40 +72,44 @@ app.post('/api/persons', (request, response) => {
 
 })
 
-
+//Gets
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
-})
-
-app.get('/api/persons/:id', (request, response) => {
-
-  new Promise((resolve, reject) => {
-    const id = Number(request.params.id)
-    const found = persons.find(person => {
-      if (id === person.id) {
-        resolve(person)
-        return true
-      }
-      return false
+  personService.fetchAll()
+    .then(persons => {
+      response.json(persons)
     })
-    if (!found) {
-      reject(new Error('Person not found'))
-    }
-  })
-    .then(person => response.json(person))
     .catch(error => response.status(404).end())
 })
 
-app.get('/info', (request, response) => {
-  response.send(
-    `<p>
-      Phonebook has info of ${persons.length} people.
-      <br/>
-      <br/>
-      ${new Date().toDateString()}
-    </p>`);
-});
+app.get('/api/persons/:id', (request, response, next) => {
+  personService.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => response.status(404).end())
+})
 
+
+app.get('/info', (request, response) => {
+  personService.length()
+    .then(count => {
+      response.send(
+        `<p>Phonebook has info of ${count} people.</p>
+        <br/>
+        <br/>
+        ${new Date().toDateString()}`
+      );
+    })
+    .catch(error => {
+      console.error(error);
+      response.status(500).send('<p>Error fetching information</p>');
+    });
+});
+//Delete
 app.delete('/api/persons/:id', (request, response) => {
   new Promise((resolve, reject) => {
     const id = Number(request.params.id)
@@ -110,9 +119,13 @@ app.delete('/api/persons/:id', (request, response) => {
     .then(___ => response.status(204).end())
     .catch(error => response.status(404).end())
 })
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+//Unkown and listening
 
-
-
+const unkowonEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+app.use(unkowonEndpoint)
 app.listen(port, hostname, () => {
   console.log(`Server running on link http://${hostname}:${port}`)
 })
