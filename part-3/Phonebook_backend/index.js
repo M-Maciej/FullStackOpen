@@ -109,17 +109,17 @@ app.get('/info', (request, response) => {
       response.status(500).send('<p>Error fetching information</p>')
     });
 });
-//Delete
-app.delete('/api/persons/:id', (request, response) => {
-  new Promise((resolve, reject) => {
-    const id = Number(request.params.id)
-    persons = persons.filter(person => person.id !== id)
-    resolve()
-  })
-    .then(___ => response.status(204).end())
-    .catch(error => response.status(404).end())
-})
 app.get('/favicon.ico', (req, res) => res.status(204).end())
+
+
+//Delete
+app.delete('/api/persons/:id', (request, response, next) => {
+  personService.deleteById(request.params.id)
+    .then(result => {
+      response.status(204).end();
+    })
+    .catch(error => next(error));
+});
 //Unkown and listening
 
 const unkowonEndpoint = (request, response) => {
