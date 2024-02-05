@@ -15,6 +15,25 @@ content-type: application/json
 }
 
 ###
+PUT https://exercise-phonebook-backend-m.fly.dev/api/persons/65c12da2f85b58afeba20fe2 HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Arthur Pendragon",
+    "number": "1992"
+}
+
+
+###
+PUT https://exercise-phonebook-backend-m.fly.dev/api/persons/65c12da2f85b58afeba20fe2 HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Arthur NotPendragon",
+    "number": "192349222"
+}
+
+###
 GET http://localhost:6786/api/persons/ HTTP/1.1
 
 ###
@@ -29,10 +48,19 @@ POST http://localhost:6786/api/persons HTTP/1.1
 DELETE http://localhost:6786/api/persons/2323 HTTP/1.1
 
 ###
-PUT http://localhost:6786/api/persons/:id HTTP/1.1
+PUT http://localhost:6786/api/persons/65c12da2f85b58afeba20fe2 HTTP/1.1
 Content-Type: application/json
 
 {
     "name": "Arthur Pendragon",
-    "number": "1212"
+    "number": "1923492"
+}
+
+###
+PUT http://localhost:6786/api/persons/65c12da2f85b58afeba20fe2 HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Arthur NotPendragon",
+    "number": "192349222"
 }

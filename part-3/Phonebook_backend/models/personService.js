@@ -1,5 +1,5 @@
 const Person = require('./person');
-const { DatabaseError, NotFoundError, IdError } = require('./customErrors');
+const { DatabaseError, NotFoundError, IdError, ValidationError } = require('./customErrors');
 
 const findAll = () => {
   return Person.find({})
@@ -58,10 +58,45 @@ const length = () => {
     });
 };
 
+const updatePersonNumber = (id, personEntry) => {
+  // First, validate the person exists and the name matches
+  return findById(id)
+    .then(existingPerson => {
+      // Check if the name matches the existing record
+      if (existingPerson.name !== personEntry.name) {
+        throw new ValidationError('The name cannot be changed.');
+      }
+      // If validation passes, proceed with the update
+      return Person.findByIdAndUpdate(id, { number: personEntry.number }, { new: true, runValidators: true })
+    })
+    .then(updatedPerson => {
+      if (!updatedPerson) {
+        throw new NotFoundError(`Person not found with id: ${id}`);
+      }
+      return updatedPerson;
+    })
+    .catch(error => {
+      // Handle different kinds of errors
+      if (error.name === 'CastError') {
+        throw new IdError(`Invalid ID format: ${id}`);
+      } else if (error.name === 'ValidationError') {
+        throw new ValidationError(`Validation failed: ${error.message}`);
+      } else if (error instanceof NotFoundError || error instanceof ValidationError || error instanceof IdError) {
+        // Re-throw custom errors as they are
+        throw error;
+      } else {
+        // For any other errors, consider them as database-related errors
+        throw new DatabaseError(`Error updating person: ${error.message}`);
+      }
+    });
+};
+
+
 module.exports = {
   findAll,
   findById,
   addPerson,
   deleteById,
   length,
+  updatePersonNumber,
 };

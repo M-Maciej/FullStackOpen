@@ -122,14 +122,29 @@ app.delete('/api/persons/:id', (request, response, next) => {
     }
   })
 })
-//Unkown and listening
+
+//Put
+app.put('/api/persons/:id', (request, response, next) => {
+  const personEntry = {
+  name:request.body.name,
+  number:request.body.number,
+  }
+  
+  personService.updatePersonNumber(request.params.id, personEntry)
+    .then(updatedPerson => {
+      response.json(updatedPerson); 
+    })
+    .catch(next); 
+});
+
+//Unkown 
 
 const unkowonEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 app.use(unkowonEndpoint)
 
-
+//Error handling middleware
 const errorHandler = (error,request, response ,next)=>{
   console.error(error.message)
   if (error instanceof ValidationError) {
@@ -150,7 +165,7 @@ const errorHandler = (error,request, response ,next)=>{
 
 app.use(errorHandler)
 
-
+//Listening
 app.listen(port, hostname, () => {
   console.log(`Server running on link http://${hostname}:${port}`)
 })
