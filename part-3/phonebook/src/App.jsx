@@ -56,7 +56,7 @@ const App = () => {
             Promise.resolve(handleNotify(`Changed number for ${theRegistration.name} to ${theRegistration.number}`))
           )
           .catch(error => {
-            Promise.resolve(handleNotify(error.response.data.error || error.response.data.message))
+            Promise.resolve(handleNotify(`${error.response.data.error}, ${error.message}`))
             console.log('fail', error);
           })
       }
@@ -72,7 +72,7 @@ const App = () => {
           Promise.resolve(handleNotify(`Added ${theRegistration.name}`))
         )
         .catch(error => {
-          handleNotify(error.response.data.error || error.response.data.message);
+          Promise.resolve(handleNotify(`${error.response.data.error}, ${error.message}`))
           console.log('fail', error);
         })
       /*
@@ -102,7 +102,7 @@ const App = () => {
         Promise.resolve(handleNotify(`Deleted ${persons.find(per => per.id === id).name}`))
       )
       .catch(error => {
-        handleNotify(`Failed to delete: ${error.response.data.error || error.response.data.message}`);
+        handleNotify(`Failed to delete: ${error.response.data.error}, ${error.message}`);
         phonebookServices.getAll()
           .then(resData => setPersons(resData))
           .catch(error => console.log('Error fetching data after delete failure', error));
