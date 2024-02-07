@@ -56,11 +56,8 @@ const App = () => {
             Promise.resolve(handleNotify(`Changed number for ${theRegistration.name} to ${theRegistration.number}`))
           )
           .catch(error => {
-            if (error.message === 'Request failed with status code 404') {
-              Promise.resolve(handleNotify(`Information of ${theRegistration.name} has already been removed from the server.`))
-            }
-            console.log('fail')
-            console.log(error)
+            Promise.resolve(handleNotify(error.response.data.error || error.response.data.message))
+            console.log('fail', error);
           })
       }
     }
@@ -75,8 +72,8 @@ const App = () => {
           Promise.resolve(handleNotify(`Added ${theRegistration.name}`))
         )
         .catch(error => {
-          console.log('fail')
-          console.log(error)
+          handleNotify(error.response.data.error || error.response.data.message);
+          console.log('fail', error);
         })
       /*
       setPersons(persons.concat({ name: newRegistration.name.trim(), number: newRegistration.number.trim(), id: persons.length + 1 }))
@@ -104,12 +101,11 @@ const App = () => {
       .then(() =>
         Promise.resolve(handleNotify(`Deleted ${persons.find(per => per.id === id).name}`))
       )
-      .catch(() => {
-        console.log(`Person has been already deleted`)
-        phonebookServices
-          .getAll()
+      .catch(error => {
+        handleNotify(`Failed to delete: ${error.response.data.error || error.response.data.message}`);
+        phonebookServices.getAll()
           .then(resData => setPersons(resData))
-
+          .catch(error => console.log('Error fetching data after delete failure', error));
       })
   }
 

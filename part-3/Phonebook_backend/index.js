@@ -57,9 +57,6 @@ app.use(morgan(function (tokens, req, res) {
 //HTTP requests
 //Post
 app.post('/api/persons', (request, response, next) => {
-  if (!request.body.name || !request.body.number) {
-      return next(new ValidationError('Content missing'));
-  }
   personService.findAll()
       .then(persons => {
           const unique = persons.find(person => person.name === request.body.name);
@@ -167,5 +164,5 @@ app.use(errorHandler)
 
 //Listening
 app.listen(port, hostname, () => {
-  console.log(`Server running on link http://${hostname}:${port}`)
+  console.log(`Server running on link http://localhost:${port}`)
 })

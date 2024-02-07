@@ -30,9 +30,14 @@ const addPerson = (name, number) => {
   return person.save()
     .then(newPerson => newPerson)
     .catch(error => {
-      throw new DatabaseError(`Error adding person: ${error.message}`);
+      if (error.name === 'ValidationError') {
+        throw new ValidationError(error.message);
+      } else {
+        throw new DatabaseError(`Error adding person: ${error.message}`);
+      }
     });
 };
+
 
 const deleteById = (id) => {
   return Person.findByIdAndDelete(id)
@@ -67,7 +72,7 @@ const updatePersonNumber = (id, personEntry) => {
         throw new ValidationError('The name cannot be changed.');
       }
       // If validation passes, proceed with the update
-      return Person.findByIdAndUpdate(id, { number: personEntry.number }, { new: true, runValidators: true })
+      return Person.findByIdAndUpdate(id, { number: personEntry.number }, { new: true, runValidators: true, context: 'query' })
     })
     .then(updatedPerson => {
       if (!updatedPerson) {
