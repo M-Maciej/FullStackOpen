@@ -1,0 +1,23 @@
+Get http://localhost:3003/api/blogs HTTP/1.1
+
+###
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+    "title":"Camelot",
+    "author": "Arthur Pendragon",
+    "url": "Round Table",
+    "likes":"12"
+}
+
+###
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+    "title":"Camelot",
+    "author": "Arthur Pendragon",
+    "url": "Round Table",
+    "likes":"12"
+}

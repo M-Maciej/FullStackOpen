@@ -1,23 +1,28 @@
 const Person = require('./person')
-const { DatabaseError, NotFoundError, IdError, ValidationError } = require('./customErrors')
+const {
+    DatabaseError,
+    NotFoundError,
+    IdError,
+    ValidationError,
+} = require('./customErrors')
 
 const findAll = () => {
     return Person.find({})
-        .then(result => result)
-        .catch(error => {
+        .then((result) => result)
+        .catch((error) => {
             throw new DatabaseError(`Error finding all persons: ${error.message}`)
         })
 }
 
 const findById = (id) => {
     return Person.findById(id)
-        .then(person => {
+        .then((person) => {
             if (!person) {
                 throw new NotFoundError('Person not found')
             }
             return person
         })
-        .catch(error => {
+        .catch((error) => {
             if (error.name === 'CastError') {
                 throw new IdError('Invalid ID format')
             }
@@ -27,27 +32,24 @@ const findById = (id) => {
 
 const addPerson = (name, number) => {
     const person = new Person({ name, number })
-    return person.save()
-        .then(newPerson => newPerson)
-        .catch(error => {
-            if (error.name === 'ValidationError') {
-                throw new ValidationError(error.message)
-            } else {
-                throw new DatabaseError(`Error adding person: ${error.message}`)
-            }
-        })
+    return person.save().catch((error) => {
+        if (error.name === 'ValidationError') {
+            throw new ValidationError(error.message)
+        } else {
+            throw new DatabaseError(`Error adding person: ${error.message}`)
+        }
+    })
 }
-
 
 const deleteById = (id) => {
     return Person.findByIdAndDelete(id)
-        .then(result => {
+        .then((result) => {
             if (!result) {
                 throw new NotFoundError('Person not found')
             }
             return result
         })
-        .catch(error => {
+        .catch((error) => {
             if (error.name === 'CastError') {
                 throw new IdError('Invalid ID format')
             }
@@ -57,8 +59,8 @@ const deleteById = (id) => {
 
 const length = () => {
     return Person.countDocuments({})
-        .then(count => count)
-        .catch(error => {
+        .then((count) => count)
+        .catch((error) => {
             throw new DatabaseError(`Error counting persons: ${error.message}`)
         })
 }
@@ -66,27 +68,35 @@ const length = () => {
 const updatePersonNumber = (id, personEntry) => {
     // First, validate the person exists and the name matches
     return findById(id)
-        .then(existingPerson => {
+        .then((existingPerson) => {
             // Check if the name matches the existing record
             if (existingPerson.name !== personEntry.name) {
                 throw new ValidationError('The name cannot be changed.')
             }
             // If validation passes, proceed with the update
-            return Person.findByIdAndUpdate(id, { number: personEntry.number }, { new: true, runValidators: true, context: 'query' })
+            return Person.findByIdAndUpdate(
+                id,
+                { number: personEntry.number },
+                { new: true, runValidators: true, context: 'query' }
+            )
         })
-        .then(updatedPerson => {
+        .then((updatedPerson) => {
             if (!updatedPerson) {
                 throw new NotFoundError(`Person not found with id: ${id}`)
             }
             return updatedPerson
         })
-        .catch(error => {
+        .catch((error) => {
             // Handle different kinds of errors
             if (error.name === 'CastError') {
                 throw new IdError(`Invalid ID format: ${id}`)
             } else if (error.name === 'ValidationError') {
                 throw new ValidationError(`Validation failed: ${error.message}`)
-            } else if (error instanceof NotFoundError || error instanceof ValidationError || error instanceof IdError) {
+            } else if (
+                error instanceof NotFoundError ||
+        error instanceof ValidationError ||
+        error instanceof IdError
+            ) {
                 // Re-throw custom errors as they are
                 throw error
             } else {
@@ -95,7 +105,6 @@ const updatePersonNumber = (id, personEntry) => {
             }
         })
 }
-
 
 module.exports = {
     findAll,
